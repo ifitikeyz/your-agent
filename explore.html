@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore -  Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #09e526;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 120px 50px 60px;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-subtitle {
+            font-size: 20px;
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 2;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(22,22,22,0.8);
+            color: white;
+            border-radius: 8px;
+            min-width: 300px;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #09e526;
+        }
+
+        .filter-select {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(22,22,22,0.8);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .search-btn {
+            background: #09e526;
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #09e526;
+        }
+
+        .search-error {
+            color: #81f190;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Trending Section */
+        .trending-section {
+            padding: 60px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: #09e526;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        /* Property Card */
+        .property-card {
+            background: rgba(22,22,22,0.8);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(229,9,20,0.3);
+        }
+
+        .property-image {
+            height: 200px;
+            background: linear-gradient(45deg, #09e526, #221f1f);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #09e526;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .property-content {
+            padding: 20px;
+        }
+
+        .property-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #09e526;
+            margin-bottom: 10px;
+        }
+
+        .property-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .property-location {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .property-features {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .contact-info {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contact-btn {
+            background: #09e526;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: #09e526;
+        }
+
+        .phone-link, .email-link {
+            color: #09e526;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .phone-link:hover, .email-link:hover {
+            color: #09e526;
+            text-decoration: underline;
+        }
+
+        /* Agent Card */
+        .agent-card {
+            background: rgba(22,22,22,0.8);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(229,9,20,0.3);
+        }
+
+        .agent-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #09e526, #221f1f);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .agent-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .agent-title {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .agent-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #09e526;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .agent-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 0 50px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .results-count {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .search-section {
+                padding: 100px 20px 40px;
+            }
+
+            .search-title {
+                font-size: 32px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-input, .filter-select {
+                min-width: auto;
+            }
+
+            .trending-section {
+                padding: 40px 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-section {
+                padding: 0 20px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">YOUR AGENT</div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="search-container">
+            <h1 class="search-title">Explore</h1>
+            <p class="search-subtitle">Find your dream property or connect with top agents</p>
+            <p class="search-subtitle" style="font-size: smaller;">Images of properties will not be displayed for the sake of the agent's fee </p>
+            <p class="search-subtitle" style="font-size: smaller;">Images of Agents will not be displayed for their security </p>
+            <form class="search-form" id="searchForm">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="Search by location, property type, or agent name..."
+                >
+                <select class="filter-select" id="filterSelect">
+                    <option value="all">All Categories</option>
+                    <option value="properties">Properties</option>
+                    <option value="agents">Agents</option>
+                </select>
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+            
+            <div class="search-error" id="searchError">
+                Please enter a valid keyword (e.g., Location, apartment type....)
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="resultsSection">
+        <div class="results-header">
+            <h2 class="section-title">
+                <div class="section-icon">🔍</div>
+                Search Results
+            </h2>
+            <div>
+                <span class="results-count" id="resultsCount">0 results found</span>
+                <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
+            </div>
+        </div>
+        <div class="grid" id="resultsGrid"></div>
+    </section>
+
+    <!-- Trending Properties -->
+    <section class="trending-section">
+        <h2 class="section-title">
+            <div class="section-icon">🏠</div>
+            Trending Properties
+        </h2>
+        <div class="grid" id="propertiesGrid">
+            <!-- Properties will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Top Agents -->
+    <section class="trending-section">
+        <h2 class="section-title">
+            <div class="section-icon">👥</div>
+            Top Agents
+        </h2>
+        <div class="grid" id="agentsGrid">
+            <!-- Agents will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <script>
+        // Real estate keywords for validation
+        const realEstateKeywords = [
+            'apartment', 'house', 'self contain', 'one room', 'one bedroom', 'two bedroom flat', 'bedroom flat', 'studio', 'loft', 'penthouse',
+            'buy', 'sell', 'rent', 'lease', 'mortgage', 'property', 'real estate', 'agent',
+            'broker', 'realtor', 'listing', 'bedroom', 'bathroom', 'kitchen', 'garage',
+            'pool', 'garden', 'balcony', 'furnished', 'unfurnished', 'luxury', 'commercial', 'amarata',
+            'residential', 'investment', 'downtown', 'suburb', 'waterfront', 'new york',
+            'los angeles', 'chicago', 'miami', 'san francisco', 'boston', 'seattle', 'austin', 'agent in amarata',
+        ];
+
+        // Mock data for properties
+        const properties = [
+            {
+                id: 1,
+                price: '₦850,000',
+                title: 'Modern Downtown Apartment',
+                location: 'amarata',
+                bedrooms: 2,
+                bathrooms: 2,
+                sqft: 1200,
+                type: 'Apartment',
+                agent: 'Sarah Johnson',
+                phone: '+1 (555) 123-4567',
+                email: 'sarah@realestate.com',
+                badge: 'New Listing'
+            },
+            {
+                id: 2,
+                price: '₦1,200,000',
+                title: 'Luxury Family Home',
+                location: 'amarata',
+                bedrooms: 4,
+                bathrooms: 3,
+                sqft: 2800,
+                type: 'House',
+                agent: 'Michael Chen',
+                phone: '+1 (555) 987-6543',
+                email: 'michael@luxuryrealty.com',
+                badge: 'Hot Deal'
+            },
+            {
+                id: 3,
+                price: '₦650,000',
+                title: 'Waterfront Condo',
+                location: 'Miami Beach, FL',
+                bedrooms: 1,
+                bathrooms: 1,
+                sqft: 900,
+                type: 'Condo',
+                agent: 'Elena Rodriguez',
+                phone: '+1 (555) 456-7890',
+                email: 'elena@oceanview.com',
+                badge: 'Price Drop'
+            },
+            {
+                id: 4,
+                price: '₦2,100,000',
+                title: 'Victorian Townhouse',
+                location: 'San Francisco, CA',
+                bedrooms: 3,
+                bathrooms: 2,
+                sqft: 2200,
+                type: 'Townhouse',
+                agent: 'David Kim',
+                phone: '+1 (555) 321-0987',
+                email: 'david@sfproperties.com',
+                badge: 'Exclusive'
+            },
+            {
+                id: 5,
+                price: '₦750,000',
+                title: 'Modern Loft Space',
+                location: 'Chicago, IL',
+                bedrooms: 2,
+                bathrooms: 2,
+                sqft: 1500,
+                type: 'Loft',
+                agent: 'Amanda White',
+                phone: '+1 (555) 654-3210',
+                email: 'amanda@chicagolofts.com',
+                badge: 'Featured'
+            },
+            {
+                id: 6,
+                price: '₦950,000',
+                title: 'Suburban Family Home',
+                location: 'Austin, TX',
+                bedrooms: 4,
+                bathrooms: 3,
+                sqft: 2400,
+                type: 'House',
+                agent: 'Robert Taylor',
+                phone: '+1 (555) 789-0123',
+                email: 'robert@austinhomes.com',
+                badge: 'New'
+            }
+        ];
+
+        // Mock data for agents
+        const agents = [
+            {
+                id: 1,
+                name: 'Sarah Johnson',
+                avatar: 'SJ',
+                location: 'amarata',
+                experience: 8,
+                phone: '+1 (555) 123-4567',
+                email: 'sarah@realestate.com'
+            },
+            {
+                id: 2,
+                name: 'Michael Chen',
+                avatar: 'MC',
+                location: 'amarata',
+                experience: 12,
+                phone: '+1 (555) 987-6543',
+                email: 'michael@luxuryrealty.com'
+            },
+            {
+                id: 3,
+                name: 'Elena Rodriguez',
+                location: 'amarata',
+                avatar: 'ER',
+                experience: 6,
+                phone: '+1 (555) 456-7890',
+                email: 'elena@oceanview.com'
+            },
+            {
+                id: 4,
+                name: 'David Kim',
+                avatar: 'DK',
+                location: 'amarata',
+                experience: 15,
+                phone: '+1 (555) 321-0987',
+                email: 'david@sfproperties.com'
+            }
+        ];
+
+        // Create property card HTML
+        function createPropertyCard(property) {
+            return `
+                <div class="property-card">
+                    <div class="property-image">
+                        🏠
+                        <div class="property-badge">${property.badge}</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">${property.price}</div>
+                        <div class="property-title">${property.title}</div>
+                        <div class="property-location">📍 ${property.location}</div>
+                        <div class="property-features">
+                            <div class="feature">🛏️ {property.bedrooms} bed</div>
+                            <div class="feature">🚿 ${property.bathrooms} bath</div>
+                            <div class="feature">📐 ${property.sqft} sqft</div>
+                        </div>
+                        <div class="contact-info">
+                            <div>
+                                <div style="font-size: 14px; color: rgba(255,255,255,0.7);">Agent: ${property.agent}</div>
+                                <a href="tel:${property.phone}" class="phone-link">${property.phone}</a>
+                            </div>
+                            <a href="mailto:${property.email}" class="contact-btn">Contact</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Create agent card HTML
+        function createAgentCard(agent) {
+            return `
+                <div class="agent-card">
+                    <div class="agent-avatar">${agent.avatar}</div>
+                    <div class="agent-name">${agent.name}</div>
+                    <div class="agent-title">${agent.location}</div>
+                    <div class="agent-stats">
+                        <div class="stat">
+                            <div class="stat-number">${agent.experience}</div>
+                            <div class="stat-label">Years Experience</div>
+                        </div>
+                    </div>
+                    <div class="agent-contact">
+                        <a href="tel:${agent.phone}" class="phone-link">📞 ${agent.phone}</a>
+                        <a href="mailto:${agent.email}" class="contact-btn">Send Message</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Validate search input
+        function validateSearch(query) {
+            if (!query || query.trim().length < 2) {
+                return false;
+            }
+            
+            const words = query.toLowerCase().split(' ');
+            return words.some(word => 
+                realEstateKeywords.some(keyword => 
+                    keyword.includes(word) || word.includes(keyword)
+                )
+            );
+        }
+
+        // Search functionality
+        function performSearch(query, filter) {
+            const searchError = document.getElementById('searchError');
+            
+            if (!validateSearch(query)) {
+                searchError.style.display = 'block';
+                return [];
+            }
+            
+            searchError.style.display = 'none';
+            
+            let results = [];
+            const searchTerm = query.toLowerCase();
+            
+            if (filter === 'all' || filter === 'properties') {
+                const matchingProperties = properties.filter(property => 
+                    property.title.toLowerCase().includes(searchTerm) ||
+                    property.location.toLowerCase().includes(searchTerm) ||
+                    property.type.toLowerCase().includes(searchTerm) ||
+                    property.agent.toLowerCase().includes(searchTerm)
+                );
+                results = results.concat(matchingProperties.map(p => ({...p, type: 'property'})));
+            }
+            
+            if (filter === 'all' || filter === 'agents') {
+                const matchingAgents = agents.filter(agent => 
+                    agent.name.toLowerCase().includes(searchTerm) ||
+                    agent.location.toLowerCase().includes(searchTerm)
+                );
+                results = results.concat(matchingAgents.map(a => ({...a, type: 'agent'})));
+            }
+            
+            return results;
+        }
+
+        // Display search results
+        function displayResults(results) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsGrid = document.getElementById('resultsGrid');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            if (results.length === 0) {
+                resultsSection.style.display = 'none';
+                return;
+            }
+            
+            resultsCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
+            
+            resultsGrid.innerHTML = results.map(result => {
+                if (result.type === 'property') {
+                    return createPropertyCard(result);
+                } else {
+                    return createAgentCard(result);
+                }
+                
+            }).join('');
+            
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+            
+        }
+
+        // Clear search
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterSelect').value = 'all';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('searchError').style.display = 'none';
+        }
+
+        // Initialize page
+        function initializePage() {
+            // Populate trending properties
+            const propertiesGrid = document.getElementById('propertiesGrid');
+            propertiesGrid.innerHTML = properties.map(createPropertyCard).join('');
+            
+            // Populate top agents
+            const agentsGrid = document.getElementById('agentsGrid');
+            agentsGrid.innerHTML = agents.map(createAgentCard).join('');
+            
+            // Add search form event listener
+            document.getElementById('searchForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const query = document.getElementById('searchInput').value;
+                const filter = document.getElementById('filterSelect').value;
+                const results = performSearch(query, filter);
+                displayResults(results);
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>
